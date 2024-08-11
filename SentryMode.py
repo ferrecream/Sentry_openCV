@@ -1,9 +1,8 @@
 import cv2
-import time
-from RPiMotorLib import RpiMotorLib
 import RPi.GPIO as GPIO
+import time
 
-# GPIO pin setup for DRV8825
+# GPIO pin setup
 DIR_X = 20  # Direction pin for X axis
 STEP_X = 21  # Step pin for X axis
 DIR_Y = 19  # Direction pin for Y axis
@@ -11,16 +10,21 @@ STEP_Y = 26  # Step pin for Y axis
 
 # Setup GPIO mode
 GPIO.setmode(GPIO.BCM)
-
-# Initialize stepper motors
-motor_X = RpiMotorLib.A4988Nema(DIR_X, STEP_X, (-1, -1, -1), "DRV8825")
-motor_Y = RpiMotorLib.A4988Nema(DIR_Y, STEP_Y, (-1, -1, -1), "DRV8825")
+GPIO.setup(DIR_X, GPIO.OUT)
+GPIO.setup(STEP_X, GPIO.OUT)
+GPIO.setup(DIR_Y, GPIO.OUT)
+GPIO.setup(STEP_Y, GPIO.OUT)
 
 # Function to move stepper motor
-def move_stepper(motor, steps, direction, delay=0.001):
-    motor.motor_go(direction, "Full", steps, delay, False, 0.05)
+def move_stepper(step_pin, dir_pin, steps, direction, delay=0.001):
+    GPIO.output(dir_pin, direction)
+    for _ in range(steps):
+        GPIO.output(step_pin, GPIO.HIGH)
+        time.sleep(delay)
+        GPIO.output(step_pin, GPIO.LOW)
+        time.sleep(delay)
 
-# Initialize the USB camera (typically, device index 0 is used for the first USB camera)
+# Initialize the Pi Camera
 cap = cv2.VideoCapture(0)
 
 # Load pre-trained body detector
@@ -35,14 +39,14 @@ def track_body(center_x, center_y, frame_width, frame_height):
     y_steps = 10  # Define how many steps to move per iteration
     
     if center_x < x_threshold:
-        move_stepper(motor_X, x_steps, False)  # Move left
+        move_stepper(STEP_X, DIR_X, x_steps, GPIO.LOW)  # Move left
     elif center_x > (frame_width - x_threshold):
-        move_stepper(motor_X, x_steps, True)  # Move right
+        move_stepper(STEP_X, DIR_X, x_steps, GPIO.HIGH)  # Move right
     
     if center_y < y_threshold:
-        move_stepper(motor_Y, y_steps, False)  # Move up
+        move_stepper(STEP_Y, DIR_Y, y_steps, GPIO.LOW)  # Move up
     elif center_y > (frame_height - y_threshold):
-        move_stepper(motor_Y, y_steps, True)  # Move down
+        move_stepper(STEP_Y, DIR_Y, y_steps, GPIO.HIGH)  # Move down
 
 try:
     while True:
