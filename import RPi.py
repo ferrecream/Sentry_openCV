@@ -1,28 +1,45 @@
+#######################################
+# Copyright (c) 2021 Maker Portal LLC
+# Author: Joshua Hrisko
+#######################################
+#
+# NEMA 17 (17HS4023) Raspberry Pi Tests
+# --- rotating the NEMA 17 clockwise
+# --- and counterclockwise in a loop
+#
+#
+#######################################
+#
 import RPi.GPIO as GPIO
+from RpiMotorLib import RpiMotorLib
 import time
 
-# GPIO setup
-DIR = 20  # Direction pin
-STEP = 21  # Step pin
-CW = 1  # Clockwise rotation
-CCW = 0  # Counterclockwise rotation
-SPR = 200  # Steps per revolution (1.8 degree step angle)
+################################
+# RPi and Motor Pre-allocations
+################################
+#
+#define GPIO pins
+direction= 20 # Direction (DIR) GPIO Pin
+step = 21 # Step GPIO Pin
+EN_pin = 24 # enable pin (LOW to enable)
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(DIR, GPIO.OUT)
-GPIO.setup(STEP, GPIO.OUT)
+# Declare a instance of class pass GPIO pins numbers and the motor type
+mymotortest = RpiMotorLib.A4988Nema(direction, step, (21,21,21), "DRV8825")
+GPIO.setup(EN_pin,GPIO.OUT) # set enable pin as output
 
-# Set motor direction to clockwise
-GPIO.output(DIR, CW)
+###########################
+# Actual motor control
+###########################
+#
+dir_array = [False,True]
+GPIO.output(EN_pin,GPIO.LOW) # pull enable to low to enable motor
+for ii in range(10):
+    mymotortest.motor_go(dir_array[ii%2], # False=Clockwise, True=Counterclockwise
+                         "Full" , # Step type (Full,Half,1/4,1/8,1/16,1/32)
+                         200, # number of steps
+                         .0005, # step delay [sec]
+                         False, # True = print verbose output 
+                         .05) # initial delay [sec]
+    time.sleep(1)
 
-try:
-    while True:
-        # Pulse the step pin
-        GPIO.output(STEP, GPIO.HIGH)
-        time.sleep(0.005)  # Adjust the delay to control speed
-        GPIO.output(STEP, GPIO.LOW)
-        time.sleep(0.005)
-
-except KeyboardInterrupt:
-    # Cleanup GPIO settings
-    GPIO.cleanup()
+GPIO.cleanup() # clear GPIO allocations after run
