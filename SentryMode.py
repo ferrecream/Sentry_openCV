@@ -1,6 +1,10 @@
 import cv2
 import RPi.GPIO as GPIO
 import time
+import serial
+
+
+ser = serial.Serial("/dev/ttyUSB0", 115200, timeout= 1)
 
 # GPIO pin setup
 DIR_X = 20  # Direction pin for X axis
@@ -15,14 +19,12 @@ GPIO.setup(STEP_X, GPIO.OUT)
 GPIO.setup(DIR_Y, GPIO.OUT)
 GPIO.setup(STEP_Y, GPIO.OUT)
 
-# Function to move stepper motor
-def move_stepper(step_pin, dir_pin, steps, direction, delay=0.001):
-    GPIO.output(dir_pin, direction)
-    for _ in range(steps):
-        GPIO.output(step_pin, GPIO.HIGH)
-        time.sleep(delay)
-        GPIO.output(step_pin, GPIO.LOW)
-        time.sleep(delay)
+ser.setDTR(False)
+time.sleep(1)
+ser.flushInput()
+ser.setDTR(True)
+time.sleep(2)
+
 
 # Initialize the Pi Camera
 cap = cv2.VideoCapture(0)
@@ -34,19 +36,20 @@ def track_body(center_x, center_y, frame_width, frame_height):
     # Define thresholds and steps based on your setup
     x_threshold = frame_width // 3
     y_threshold = frame_height // 3
-    
-    x_steps = 10  # Define how many steps to move per iteration
-    y_steps = 10  # Define how many steps to move per iteration
+
     
     if center_x < x_threshold:
-        move_stepper(STEP_X, DIR_X, x_steps, GPIO.LOW)  # Move left
+        ser.write(b'0')  # Move left
+        print("send data to arduino")
     elif center_x > (frame_width - x_threshold):
-        move_stepper(STEP_X, DIR_X, x_steps, GPIO.HIGH)  # Move right
-    
+        ser.write(b'1')  # Move right
+        print("send data to arduino")
     if center_y < y_threshold:
-        move_stepper(STEP_Y, DIR_Y, y_steps, GPIO.LOW)  # Move up
+        ser.write(b'2')  # Move up
+        print("send data to arduino")
     elif center_y > (frame_height - y_threshold):
-        move_stepper(STEP_Y, DIR_Y, y_steps, GPIO.HIGH)  # Move down
+        ser.write(b'3')  # Move down
+        print("send data to arduino")
 
 try:
     while True:
