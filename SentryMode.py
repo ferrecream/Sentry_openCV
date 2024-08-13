@@ -14,10 +14,6 @@ STEP_Y = 26  # Step pin for Y axis
 
 # Setup GPIO mode
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(DIR_X, GPIO.OUT)
-GPIO.setup(STEP_X, GPIO.OUT)
-GPIO.setup(DIR_Y, GPIO.OUT)
-GPIO.setup(STEP_Y, GPIO.OUT)
 
 ser.setDTR(False)
 time.sleep(1)
