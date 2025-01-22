@@ -27,14 +27,19 @@ void setup() {
 
 void loop() {
   if (Serial.available() > 0) {
-    
-    String input = Serial.readStringUntil('\n');
+    String input = "" * * 
+    input = Serial.readStringUntil('\n');
     input.trim();
-    if (input = "shoot"){
+                    // say what you got:
+                Serial.print("I received: ");
+                Serial.println(input);
+                
+    if (input == "shoot"){
       digitalWrite(shootPin, HIGH);
       delay(80);
       digitalWrite(shootPin, LOW);
-    }else{
+    }
+    else{
       int commaIndex = input.indexOf(',');
       if (commaIndex > 0) {
         int xError = input.substring(0, commaIndex).toInt();
@@ -53,4 +58,5 @@ void loop() {
   }
   stepper1.run();
   stepper2.run();
+  
 }

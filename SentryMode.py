@@ -32,7 +32,8 @@ def track_body(center_x, center_y, frame_width, frame_height):
     tolerance = 20  # pixels
     x_error = center_x - (frame_width // 2)
     y_error = center_y - (frame_height // 2)
-
+    y_error = y_error * 3
+    
     if abs(x_error) <= tolerance and abs(y_error) <= tolerance:
         # If the target is centered, send 'shoot' command
         if last_x_error != "shoot":  # Avoid sending repeated 'shoot' commands
