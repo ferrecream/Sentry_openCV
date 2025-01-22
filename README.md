@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/e50b6156-1771-4bf7-af76-c94f0d1e761e
   - The Arduino triggers a shooting mechanism when the target is centered.
 - **3D-Printed Design:**
   - Designed in Fusion 360 and assembled with 3D-printed parts.
-- **Remote Control11**
+- **Remote Control**
    - using Z Q S D to aim manualy on a target.
    - The sentry can be switched from manual mode to tracking mode with ENTER and vise versa.
 ---
