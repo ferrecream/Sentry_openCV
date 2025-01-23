@@ -1,4 +1,3 @@
-
 #include <AccelStepper.h>
 
 #define dirPin1 2
@@ -14,6 +13,7 @@ AccelStepper stepper2(motorInterfaceType, stepPin2, dirPin2);
 
 float kp = 0.2;
 int deadZone = 5;
+bool homing = false; // Flag to indicate if homing is active
 
 void setup() {
   Serial.begin(115200);
@@ -29,7 +29,23 @@ void setup() {
 }
 
 void loop() {
-  //if (Serial.available() > 0) {
+  // Non-blocking homing
+  if (digitalRead(homePin) == LOW && !homing) {
+    stepper1.move(-1800); // Move to the home position
+    homing = true;
+  }
+
+  if (homing) {
+    stepper1.run(); // Run the homing move
+    stepper2.run(); // Keep stepper 2 active (even if stationary)
+    if (stepper1.distanceToGo() == 0) {
+      homing = false; // Homing completed
+    }
+    return; // Skip other operations while homing
+  }
+
+  // Handle serial input
+  if (Serial.available() > 0) {
     String input = Serial.readStringUntil('\n');
     input.trim();
 
@@ -43,20 +59,20 @@ void loop() {
         int xError = input.substring(0, commaIndex).toInt();
         int yError = input.substring(commaIndex + 1).toInt();
 
+        // Only move if the error is outside the dead zone
         if (abs(xError) > deadZone) {
           int xMove = kp * xError * 2; // Scale for faster movement
           stepper1.moveTo(stepper1.currentPosition() + xMove);
-          stepper1.run();
         }
         if (abs(yError) > deadZone) {
           int yMove = kp * yError * 2; // Scale for faster movement
           stepper2.moveTo(stepper2.currentPosition() + yMove);
-          stepper2.run();
         }
-    } else if (digitalRead(homePin) == LOW) {
-      stepper1.move(-1800);
-      stepper1.runToPosition();
-      delay(1000);
+      }
     }
   }
+
+  // Run steppers continuously (non-blocking)
+  stepper1.run();
+  stepper2.run();
 }
