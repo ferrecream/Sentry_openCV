@@ -130,4 +130,6 @@ https://github.com/user-attachments/assets/e50b6156-1771-4bf7-af76-c94f0d1e761e
 - Integrate additional sensors for enhanced precision and safety.
 
 
+## License
 
+This project is open-source and available under the MIT License.
