@@ -1,9 +1,14 @@
 # Camera Tracking Turret
 
 ## **Project Overview**
-This project is a camera tracking turret that can follow a target and trigger an action (e.g., shoot) when the target is centered. The system is powered by a Raspberry Pi and an Arduino, with 3D-printed components for the turret structure. The Raspberry Pi runs a tracking algorithm using OpenCV, while the Arduino controls the turret’s movement and firing mechanism.
-
+This project is a camera tracking turret that can follow a target and trigger an action (e.g., shoot) when the target is centered. The system is powered by a Raspberry Pi and an Arduino, with 3D-printed components for the turret structure. The Raspberry Pi runs a tracking algorithm using OpenCV, while the Arduino controls the turret’s movement and firing mechanism. There are 2 .py scripts the manual one is the latest verion this one features threading and manual controll And its overall better optimized.
+ 
 ---
+![Sentry](./Resources/SentryPic.jpg)
+
+https://github.com/user-attachments/assets/e50b6156-1771-4bf7-af76-c94f0d1e761e
+
+
 
 ## **Features**
 - **Real-Time Target Tracking:**
@@ -16,7 +21,9 @@ This project is a camera tracking turret that can follow a target and trigger an
   - The Arduino triggers a shooting mechanism when the target is centered.
 - **3D-Printed Design:**
   - Designed in Fusion 360 and assembled with 3D-printed parts.
-
+- **Remote Control**
+   - using Z Q S D to aim manualy on a target.
+   - The sentry can be switched from manual mode to tracking mode with ENTER and vise versa.
 ---
 
 ## **Hardware Components**
