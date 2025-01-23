@@ -4,7 +4,7 @@
 This project is a camera tracking turret that can follow a target and trigger an action (e.g., shoot) when the target is centered. The system is powered by a Raspberry Pi and an Arduino, with 3D-printed components for the turret structure. The Raspberry Pi runs a tracking algorithm using OpenCV, while the Arduino controls the turret’s movement and firing mechanism. There are 2 .py scripts the manual one is the latest verion this one features threading and manual controll And its overall better optimized.
  
 ---
-![Sentry](./Resources/SentryPic.jpg)
+![Sentry](./Resources/SentryV2.jpg)
 
 https://github.com/user-attachments/assets/e50b6156-1771-4bf7-af76-c94f0d1e761e
 
@@ -17,6 +17,7 @@ https://github.com/user-attachments/assets/e50b6156-1771-4bf7-af76-c94f0d1e761e
 - **Precision Movement:**
   - Stepper motors ensure smooth and accurate turret movement.
   - Adjustable proportional control for tracking precision.
+  - Homing Switch
 - **Customizable Shooting Mechanism:**
   - The Arduino triggers a shooting mechanism when the target is centered.
 - **3D-Printed Design:**
@@ -46,7 +47,8 @@ https://github.com/user-attachments/assets/e50b6156-1771-4bf7-af76-c94f0d1e761e
    - Captures video for real-time tracking.
 7. **Shooting Mechanism:**
    - Controlled by the Arduino (e.g., solenoid, servo).
-
+8. **Limit/Homing Switch:**
+   - If the Switch is triggerd the Sentry will go to the designated homing position.
 ---
 
 ## **Software Overview**
@@ -91,7 +93,7 @@ https://github.com/user-attachments/assets/e50b6156-1771-4bf7-af76-c94f0d1e761e
 2. Copy the tracking script to the Raspberry Pi.
 3. Run the script:
    ```bash
-   python3 tracking_turret.py
+   python3 manualSentryMode.py (or the SentryMode.py PS for absolute noobs do not paste whats in these brackets)
    ```
 
 #### Arduino:
