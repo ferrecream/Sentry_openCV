@@ -1,3 +1,4 @@
+
 #include <AccelStepper.h>
 
 #define dirPin1 2
@@ -6,6 +7,7 @@
 #define stepPin2 5
 #define motorInterfaceType 1
 #define shootPin 6
+#define homePin 7
 
 AccelStepper stepper1(motorInterfaceType, stepPin1, dirPin1);
 AccelStepper stepper2(motorInterfaceType, stepPin2, dirPin2);
@@ -22,24 +24,20 @@ void setup() {
   stepper2.setMaxSpeed(4000);
   stepper2.setAcceleration(20000);
 
+  pinMode(homePin, INPUT_PULLUP);
   pinMode(shootPin, OUTPUT);
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    String input = "" * * 
-    input = Serial.readStringUntil('\n');
+  //if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');
     input.trim();
-                    // say what you got:
-                Serial.print("I received: ");
-                Serial.println(input);
-                
-    if (input == "shoot"){
+
+    if (input == "shoot") {
       digitalWrite(shootPin, HIGH);
       delay(80);
       digitalWrite(shootPin, LOW);
-    }
-    else{
+    } else {
       int commaIndex = input.indexOf(',');
       if (commaIndex > 0) {
         int xError = input.substring(0, commaIndex).toInt();
@@ -48,15 +46,17 @@ void loop() {
         if (abs(xError) > deadZone) {
           int xMove = kp * xError * 2; // Scale for faster movement
           stepper1.moveTo(stepper1.currentPosition() + xMove);
+          stepper1.run();
         }
         if (abs(yError) > deadZone) {
           int yMove = kp * yError * 2; // Scale for faster movement
           stepper2.moveTo(stepper2.currentPosition() + yMove);
+          stepper2.run();
         }
-      }
+    } else if (digitalRead(homePin) == LOW) {
+      stepper1.move(-1800);
+      stepper1.runToPosition();
+      delay(1000);
     }
   }
-  stepper1.run();
-  stepper2.run();
-  
 }
